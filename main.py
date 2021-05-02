@@ -66,11 +66,10 @@ class Coromozom():
 
 ###   Correct
 
-def population(n):
+def population(n , populationSize):
     p = []
-    num = n * 5
     counterpop = 0
-    while counterpop < num:
+    while counterpop < populationSize:
         history = []
         counter = 0
         while counter < n:
@@ -124,7 +123,6 @@ def muta(n):
 
 def parentSelection(allpop, rate):
     p = []
-    history = []
     popsize = len(allpop)
     pecent = (rate / 100)
     crosssize = int(popsize * pecent)
@@ -134,18 +132,16 @@ def parentSelection(allpop, rate):
     while i < 2:
         fmparent = []
         counter = 0
-        while counter < crosssize:
+        while counter < (int(crosssize/2)):
             num = randint(0, popsize - 1)
-            if not (num in history):
-                history.append(num)
-                fmparent.append(num)
-                counter += 1
+            fmparent.append(num)
+            counter += 1
         parents.append(fmparent)
         i += 1
     j = 0
     while j < 2:
         c = []
-        for i in range(0, crosssize):
+        for i in range(0, int(crosssize/2)):
             c.append(allpop[parents[j][i]])
         p.append(c)
         j += 1
@@ -157,8 +153,8 @@ def parentSelection(allpop, rate):
 
 def surviveSelection(allpop, n):
     allpop.sort(key=operator.attrgetter('destination'))
-    num = n * 5
-    percent = (50 / 100)
+    num = n
+    percent = (20 / 100)
     popsize = int(len(allpop) * percent)
     best = allpop[0:popsize + 1]
     while len(best) < num:
@@ -200,7 +196,6 @@ def computingDestination2x2(point1, point2):
 
 def computingTotalDestination(croms, city):
     sum1 = 0
-    sumlist = []
     for j in range(len(croms)):
         if not (croms[j].destination == 0):
             for i in range(len(croms[0].array) - 1):
@@ -217,7 +212,6 @@ def computingTotalDestination(croms, city):
 
 def recombination(allpop, parent):
     lens = len(parent[0][0].array)
-    #cross = crossover(lens)
     recomsize = len(parent[0])
     childs = []
     for j in range(0, recomsize):
@@ -320,8 +314,8 @@ def showfitness(lists):
 
 
 list_cities = []
-list_x = [26,94,24,81,87,96,0,90,37,67,32,92,39,86,93,95,85,28,34,30,46,98,91,17,15,83]
-list_y = [33,41,69,19,97,79,77,46,18,96,80,5,90,28,43,64,8,89,40,80,94,54,61,2,13,80]
+list_x = [26,94,24,81,87,96,0,90,37,67,32,92,39,86,93,95]
+list_y = [33,41,69,19,97,79,77,46,18,96,80,5,90,28,43,64]
 bestcrom = []
 bestfitness = []
 start=0
@@ -350,13 +344,16 @@ else:
         city = City(list_x[i],list_y[i])
         list_cities.append(city)
 
+
+
+print("input the population")
+populationSize = int(input())
+
 print("input mutation rates")
 mutationRate = int(input())
 
 print("input crossover rates")
 crossRate = int(input())
-
-
 
 
 print("list of Cities")
@@ -368,7 +365,7 @@ i = 0
 j = 0
 fit1 = 100
 fit2 = 200
-allPopulation = population(num)
+allPopulation = population( num ,populationSize)
 allPopulation = fitnessFunction(allPopulation, list_cities)
 bestfitness.append(allPopulation[0].destination)
 evaluate = abs(fit1 - fit2)
@@ -383,7 +380,7 @@ while j < 800:
     childs = mutation(childs, mutationRate)
     childs = fitnessFunction(childs, list_cities)
     allPopulation = addchildstopopulation(allPopulation, childs)
-    allPopulation = surviveSelection(allPopulation, num)
+    allPopulation = surviveSelection(allPopulation, populationSize)
     bestcrom.append(allPopulation[0])
     bestfitness.append(allPopulation[0].destination)
     fit2 = bestfitness[len(bestfitness) - 1]
